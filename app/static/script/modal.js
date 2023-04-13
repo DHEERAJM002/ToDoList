@@ -63,7 +63,46 @@ $(document).ready(function () {
         })
        
     });
-    
+    $('#edit-task').click(function () {
+        const tID = $('#task-form-display').attr('taskID');
+        console.log($('#task-modal').find('.form-control').val())
+        $.ajax({
+            type:'GET',
+            url:'/fetch-max-id',
+            success: function(res){
+                let id=0;
+                if(res.length==0){
+                    id = 1;
+                }else{
+                    id = res;
+                    id++;
+                    console.log(id);
+
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/create',
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify({
+                        'description': $('#task-modal').find('.form-control').val(),
+                        'id': id
+                    }),
+                    success: function (res) {
+                        console.log(res.response)
+                        location.reload();
+                    },
+                    error: function () {
+                        console.log('Error');
+                    }
+                });
+
+            },error: function(){
+                console.log('Error');
+            }
+        })
+       
+    });
 
    
     
@@ -89,10 +128,10 @@ $(document).ready(function () {
         let tID = state.data('source')
         let new_state;
 
-        if (state.text() === "Todo") {
+        if (state.text() == "Todo") {
             new_state = "In Progress"
         }
-        if (state.text() === "In Progress") {
+        if (state.text() == "In Progress") {
             new_state = "Completed"
         }
         console.log(new_state)
